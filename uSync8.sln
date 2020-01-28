@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSync8.EventTriggers", "uSy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSync.TemplateTracker", "uSync.TemplateTracker\uSync.TemplateTracker.csproj", "{6D7486DC-0B84-4914-9C01-297467A6B706}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSync8.FormsEdition", "uSync8.FormsEdition\uSync8.FormsEdition.csproj", "{946604E8-4C75-4DED-8640-F71B072E2501}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -84,6 +86,12 @@ Global
 		{6D7486DC-0B84-4914-9C01-297467A6B706}.PackageOnlyBuild|Any CPU.Build.0 = Release|Any CPU
 		{6D7486DC-0B84-4914-9C01-297467A6B706}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D7486DC-0B84-4914-9C01-297467A6B706}.Release|Any CPU.Build.0 = Release|Any CPU
+		{946604E8-4C75-4DED-8640-F71B072E2501}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{946604E8-4C75-4DED-8640-F71B072E2501}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{946604E8-4C75-4DED-8640-F71B072E2501}.PackageOnlyBuild|Any CPU.ActiveCfg = Release|Any CPU
+		{946604E8-4C75-4DED-8640-F71B072E2501}.PackageOnlyBuild|Any CPU.Build.0 = Release|Any CPU
+		{946604E8-4C75-4DED-8640-F71B072E2501}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{946604E8-4C75-4DED-8640-F71B072E2501}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

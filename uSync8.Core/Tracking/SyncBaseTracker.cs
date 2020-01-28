@@ -16,7 +16,7 @@ using uSync8.Core.Serialization;
 namespace uSync8.Core.Tracking
 {
     public abstract class SyncBaseTracker<TObject>
-        where TObject : IEntity
+        // where TObject : IEntity
     {
         protected readonly ISyncSerializer<TObject> serializer;
 

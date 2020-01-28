@@ -10,7 +10,7 @@ using uSync8.Core.Models;
 namespace uSync8.Core.Tracking
 {
     public interface ISyncTracker<TObject>
-        where TObject : IEntity
+        // where TObject : IEntity
     {
         IEnumerable<uSyncChange> GetChanges(XElement node);
     }
