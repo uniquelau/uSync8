@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<uSync xmlns:xdt="http://schemas.microsoft.com/XML-Document-Transform">
+  <BackOffice>
+    <HandlerSets>
+      <Handlers Name="default" xdt:Locator="Match(Name)">
+        <Handler Alias="relationTypeHandler" Enabled="true" Actions="All" 
+                 xdt:Locator="Match(Alias)"
+                 xdt:Transform="Insert"/>
+      </Handlers>
+    </HandlerSets>
+  </BackOffice>
+</uSync>

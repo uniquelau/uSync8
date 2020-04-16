@@ -39,6 +39,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{F098
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSync.Commands", "uSync.Commands\uSync.Commands.csproj", "{6D3B59C1-7A78-43BB-A806-F826FD4477F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "uSync8.Relations", "uSync8.Relations\uSync8.Relations.csproj", "{CBA13B13-D27D-422B-AE2D-5C5AD78C9D95}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,6 +105,12 @@ Global
 		{6D3B59C1-7A78-43BB-A806-F826FD4477F6}.PackageOnlyBuild|Any CPU.Build.0 = PackageOnlyBuild|Any CPU
 		{6D3B59C1-7A78-43BB-A806-F826FD4477F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D3B59C1-7A78-43BB-A806-F826FD4477F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBA13B13-D27D-422B-AE2D-5C5AD78C9D95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBA13B13-D27D-422B-AE2D-5C5AD78C9D95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBA13B13-D27D-422B-AE2D-5C5AD78C9D95}.PackageOnlyBuild|Any CPU.ActiveCfg = Release|Any CPU
+		{CBA13B13-D27D-422B-AE2D-5C5AD78C9D95}.PackageOnlyBuild|Any CPU.Build.0 = Release|Any CPU
+		{CBA13B13-D27D-422B-AE2D-5C5AD78C9D95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBA13B13-D27D-422B-AE2D-5C5AD78C9D95}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

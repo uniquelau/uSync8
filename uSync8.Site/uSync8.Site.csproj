@@ -522,6 +522,10 @@
       <Project>{b3afc1f9-9398-4d8e-be98-1c78bab20ec9}</Project>
       <Name>uSync8.EventTriggers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\uSync8.Relations\uSync8.Relations.csproj">
+      <Project>{cba13b13-d27d-422b-ae2d-5c5ad78c9d95}</Project>
+      <Name>uSync8.Relations</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>
