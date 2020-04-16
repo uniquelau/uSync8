@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Timers;
 using Umbraco.Core;
 using Umbraco.Core.Cache;
 using Umbraco.Core.Logging;
@@ -81,6 +82,84 @@ namespace uSync8.Relations.Handlers
         {
             RelationService.SavedRelationType += EventSavedItem;
             RelationService.DeletedRelationType += EventDeletedItem;
+         
+            // relation saving is noisy, for example if you copy a load of 
+            // pages the save event fires a lot. 
+            RelationService.SavedRelation += RelationService_SavedRelation;
+            RelationService.DeletedRelation += RelationService_DeletedRelation;
+
+            // the lock and timer are used so we don't do multiple saves
+            // instead we queue things and when nothing has changed 
+            // for about 4 seconds, then we save everything in the queue.
+            saveTimer = new Timer(4064);
+            saveTimer.Elapsed += SaveTimer_Elapsed;
+
+            pendingSaveIds = new List<int>();
+            saveLock = new object();
+        }
+
+        private void RelationService_SavedRelation(IRelationService sender, Umbraco.Core.Events.SaveEventArgs<IRelation> e)
+        {
+            if (uSync8BackOffice.eventsPaused) return;
+
+            lock (saveLock)
+            {
+                saveTimer.Stop();
+                saveTimer.Start();
+
+                // add each item to the save list (if we haven't already)
+                foreach (var item in e.SavedEntities)
+                {
+                    if (!pendingSaveIds.Contains(item.RelationTypeId))
+                        pendingSaveIds.Add(item.RelationTypeId);
+                }
+            }
+        }
+
+        private void SaveTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            lock(saveLock)
+            {
+                UpdateRelationTypes(pendingSaveIds);
+                pendingSaveIds.Clear();
+            }
+        }
+
+        private static Timer saveTimer;
+        private static List<int> pendingSaveIds;
+        private static object saveLock;
+
+        private void RelationService_DeletedRelation(IRelationService sender, Umbraco.Core.Events.DeleteEventArgs<IRelation> e)
+        {
+            if (uSync8BackOffice.eventsPaused) return;
+
+            var types = new List<int>();
+
+            foreach (var item in e.DeletedEntities)
+            {
+                if (!types.Contains(item.RelationTypeId))
+                    types.Add(item.RelationTypeId);
+            }
+
+            UpdateRelationTypes(types);
+        }
+
+        private void UpdateRelationTypes(IEnumerable<int> types)
+        {
+            foreach (var type in types)
+            {
+                var relationType = relationService.GetRelationTypeById(type);
+
+                var attempts = Export(relationType, Path.Combine(rootFolder, this.DefaultFolder), DefaultConfig);
+
+                if (!(this.DefaultConfig.GuidNames && this.DefaultConfig.UseFlatStructure))
+                {
+                    foreach (var attempt in attempts.Where(x => x.Success))
+                    {
+                        this.CleanUp(relationType, attempt.FileName, Path.Combine(rootFolder, this.DefaultFolder));
+                    }
+                }
+            }
         }
     }
 }
