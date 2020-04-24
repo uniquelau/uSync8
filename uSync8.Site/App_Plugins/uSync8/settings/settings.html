@@ -67,6 +67,17 @@
                         </div>
                     </div>
 
+                    <div class="umb-permission">
+                        <umb-toggle class="umb-permission__toggle"
+                                    checked="vm.settings.CreateOnly"
+                                    on-click="vm.settings.CreateOnly = !vm.settings.CreateOnly">
+                        </umb-toggle>
+                        <div class="umb-permission__content" ng-click="vm.settings.CreateOnly = !vm.settings.CreateOnly">
+                            <div>Create Only</div>
+                            <div class="umb-permission__description">Only import new items that don't already exist on this site</div>
+                        </div>
+                    </div>
+
                 </umb-box-content>
             </umb-box>
 
@@ -119,22 +130,29 @@
             <umb-box ng-repeat="handlerSet in vm.settings.HandlerSets" class="usync-handler-box">
                 <umb-box-header title="Handler Set: {{handlerSet.Name}}" ng-click="handlerSet.show = !handlerSet.show"></umb-box-header>
                 <umb-box-content ng-if="handlerSet.show">
-                    <div ng-repeat="handler in handlerSet.Handlers" class="umb-permission">
-                        <umb-toggle class="umb-permission__toggle"
-                                    checked="handler.Enabled"
-                                    on-click="handler.Enabled = !handler.Enabled">
-                        </umb-toggle>
+                    <div ng-repeat="handler in handlerSet.Handlers"
+                         class="flex justify-between">
+                        <div class="umb-permission">
+                            <umb-toggle class="umb-permission__toggle"
+                                        checked="handler.Enabled"
+                                        on-click="handler.Enabled = !handler.Enabled">
+                            </umb-toggle>
 
-                        <div class="umb-permission__content">
-                            <div>
-                                {{handler.Alias}}
-                            </div>
-                            <div class="umb-permission__description">
-                                Enabled for :
-                                <span ng-if="handler.DefaultConfig.Actions.length > 0">{{handler.DefaultConfig.Actions}}</span>
-                                <span ng-if="!handler.DefaultConfig.Actions">All</span>
+                            <div class="umb-permission__content">
+                                <div>
+                                    {{handler.Alias}}
+                                </div>
+                                <div class="umb-permission__description">
+                                    Enabled for :
+                                    <span ng-if="handler.DefaultConfig.Actions.length > 0">{{handler.DefaultConfig.Actions}}</span>
+                                    <span ng-if="!handler.DefaultConfig.Actions">All</span>
+                                </div>
                             </div>
                         </div>
+                        <umb-button action="vm.openHandlerConfig(handler)"
+                                    type="button"
+                                    button-style="link"
+                                    label="Settings"></umb-button>
                     </div>
                 </umb-box-content>
             </umb-box>

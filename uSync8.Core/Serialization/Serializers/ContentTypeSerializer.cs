@@ -12,7 +12,7 @@ using uSync8.Core.Models;
 namespace uSync8.Core.Serialization.Serializers
 {
     [SyncSerializer("B3F7F247-6077-406D-8480-DB1004C8211C", "ContentTypeSerializer", uSyncConstants.Serialization.ContentType)]
-    public class ContentTypeSerializer : ContentTypeBaseSerializer<IContentType>, ISyncSerializer<IContentType>
+    public class ContentTypeSerializer : ContentTypeBaseSerializer<IContentType>, ISyncOptionsSerializer<IContentType>
     {
         private readonly IContentTypeService contentTypeService;
         private readonly IFileService fileService;

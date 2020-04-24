@@ -37,6 +37,11 @@ namespace uSync8.BackOffice.Configuration
         /// </summary>
         public bool FailOnMissingParent { get; set; } = false;
 
+        /// <summary>
+        ///  Only import things when they don't already exisit (so one time import)
+        /// </summary>
+        public bool CreateOnly { get; set; } = false;
+
         public HandlerSet DefaultHandlerSet()
             => this.HandlerSets.Where(x => x.Name.InvariantEquals(this.DefaultSet)).FirstOrDefault();
     }

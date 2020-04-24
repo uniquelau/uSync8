@@ -2,6 +2,7 @@
     'use strict';
 
     function settingsController($scope,
+        editorService,
         uSync8DashboardService,
         notificationsService) {
 
@@ -12,6 +13,8 @@
         vm.umbracoVersion = Umbraco.Sys.ServerVariables.application.version;
 
         vm.saveSettings = saveSettings;
+
+        vm.openHandlerConfig = openHandlerConfig;
 
         init();
 
@@ -41,6 +44,25 @@
                 }, function (error) {
                     notificationsService.error('Saving', error.data.Message);
                 });
+        }
+
+        
+        function openHandlerConfig(config) {
+
+            editorService.open({
+                config: config,
+                title: 'handler config',
+                size: 'small',
+                view: Umbraco.Sys.ServerVariables.umbracoSettings.appPluginsPath + '/uSync8/settings/handlerConfig.html',
+                submit: function (done) {
+                    editorService.close();
+                },
+                close: function () {
+                    console.log(config);
+                    editorService.close();
+                }
+            });
+
         }
 
     }

@@ -15,7 +15,7 @@ using uSync8.Core.Models;
 namespace uSync8.Core.Serialization.Serializers
 {
     [SyncSerializer("D0E0769D-CCAE-47B4-AD34-4182C587B08A", "Template Serializer", uSyncConstants.Serialization.Template)]
-    public class TemplateSerializer : SyncSerializerBase<ITemplate>, ISyncSerializer<ITemplate>
+    public class TemplateSerializer : SyncSerializerBase<ITemplate>, ISyncOptionsSerializer<ITemplate>
     {
         private readonly IFileService fileService;
 

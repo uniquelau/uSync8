@@ -327,6 +327,7 @@
     <Content Include="App_Plugins\uSync8\settings\default.html" />
     <Content Include="App_Plugins\uSync8\settings\expansion.html" />
     <Content Include="App_Plugins\uSync8\settings\expansionController.js" />
+    <Content Include="App_Plugins\uSync8\settings\handlerConfig.html" />
     <Content Include="App_Plugins\uSync8\settings\settings.html" />
     <Content Include="App_Plugins\uSync8\settings\settingsController.js" />
     <Content Include="App_Plugins\uSync8\settings\uSyncController.js" />

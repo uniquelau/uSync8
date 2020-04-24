@@ -19,7 +19,7 @@ using uSync8.Core.Serialization;
 namespace uSync8.ContentEdition.Serializers
 {
     [SyncSerializer("5CB57139-8AF7-4813-95AD-C075D74636C2", "ContentSerializer", uSyncConstants.Serialization.Content)]
-    public class ContentSerializer : ContentSerializerBase<IContent>, ISyncSerializer<IContent>
+    public class ContentSerializer : ContentSerializerBase<IContent>, ISyncOptionsSerializer<IContent>
     {
         protected readonly IContentService contentService;
         protected readonly IFileService fileService;

@@ -3,6 +3,7 @@
 
     public enum ChangeType : int
     {
+        AlreadyExists = -3,
         Clean = -2,
         Removed = -1,
         NoChange = 0,

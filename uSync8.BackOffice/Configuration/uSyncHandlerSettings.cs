@@ -20,6 +20,8 @@ namespace uSync8.BackOffice.Configuration
 
         public OverriddenValue<bool> FailOnMissingParent { get; set; } = new OverriddenValue<bool>();
 
+        public OverriddenValue<bool> CreateOnly { get; set; } = new OverriddenValue<bool>();
+
         public Dictionary<string, string> Settings { get; set; } = new Dictionary<string, string>();
 
         public HandlerSettings(string alias, bool enabled)

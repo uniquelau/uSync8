@@ -13,7 +13,7 @@ using uSync8.Core.Models;
 namespace uSync8.Core.Serialization.Serializers
 {
     [SyncSerializer("CBB3FDA1-F7B3-470E-B78F-EB316576C8C6", "Macro Serializer", uSyncConstants.Serialization.Macro)]
-    public class MacroSerializer : SyncSerializerBase<IMacro>, ISyncSerializer<IMacro>
+    public class MacroSerializer : SyncSerializerBase<IMacro>, ISyncOptionsSerializer<IMacro>
     {
         private readonly IMacroService macroService;
 

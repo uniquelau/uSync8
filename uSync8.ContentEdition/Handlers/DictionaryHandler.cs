@@ -180,6 +180,9 @@ namespace uSync8.ContentEdition.Handlers
 
         private bool IsOneWay(HandlerSettings config)
         {
+            if (config.CreateOnly == true) return true;
+            
+            // legacy config, for this item,
             return (config.Settings.ContainsKey("OneWay") && config.Settings["OneWay"].InvariantEquals("true"));
         }
     }

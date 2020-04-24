@@ -33,6 +33,11 @@ namespace uSync8.Core.Serialization
 
     public class SyncSerializerOptions
     {
+        /// <summary>
+        ///  only add the item if it doesn't already exist
+        /// </summary>
+        public bool CreateOnly { get; set; }
+
         public SerializerFlags Flags { get; set; }
 
         /// <summary>

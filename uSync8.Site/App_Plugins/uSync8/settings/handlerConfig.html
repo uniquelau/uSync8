@@ -1,0 +1,89 @@
+<umb-editor-panel>
+    <umb-editor-header name="model.config.Alias"
+                       description="'Settings for the handler'"
+                       description-locked="true"
+                       name-locked="true"
+                       hide-alias="true"
+                       hide-icon="true">
+    </umb-editor-header>
+
+    <umb-editor-container class="form-horizontal">
+
+        <umb-box>
+            <umb-box-header title="Handler Options"></umb-box-header>
+            <umb-box-content>
+                
+                <umb-control-group label="Enabled"
+                                   description="Is this handler on?">
+                    <umb-toggle checked="model.config.Enabled"
+                                on-click="model.config.Enabled = !model.config.Enabled"
+                                show-labels="true"
+                                label-on="Enabled"
+                                label-off="Disabled"
+                                label-position="right">
+                    </umb-toggle>
+                </umb-control-group>
+
+                <umb-control-group label="Enabled For"
+                                   description="What actions does this handler run on?">
+
+                    <select ng-model="model.config.Actions">
+                        <option>All</option>
+                        <option>Export</option>
+                        <option>Import</option>
+                        <option>ExportOnSave</option>
+                    </select>
+                    
+                </umb-control-group>
+            </umb-box-content>
+        </umb-box>
+
+        <umb-box>
+            <umb-box-header title="Handler Settings"></umb-box-header>
+            <umb-box-content>
+                <umb-control-group label="Flat structure"
+                                   description="All items stored in a flat folder strucure">
+                    <umb-toggle checked="model.config.UseFlatStructure.Value"
+                                on-click="model.config.UseFlatStructure.Value = !model.config.UseFlatStructure.Value"
+                                show-labels="true"
+                                label-on="Flat"
+                                label-off="Folders"
+                                label-position="right">
+                    </umb-toggle>
+                </umb-control-group>
+
+                <umb-control-group label="Use Guids for filenames"
+                                   description="Use the guid of an item as the filename">
+                    <umb-toggle checked="model.config.GuidNames.Value"
+                                on-click="model.config.GuidNames.Value = !model.config.GuidNames.Value"
+                                show-labels="true"
+                                label-on="Flat"
+                                label-off="Folders"
+                                label-position="right">
+                    </umb-toggle>
+                </umb-control-group>
+            </umb-box-content>
+        </umb-box>
+
+    </umb-editor-container>
+
+    <umb-editor-footer>
+        <umb-editor-footer-content-right>
+            <umb-button type="button"
+                        button-style="link"
+                        label-key="general_close"
+                        action="model.close()">
+            </umb-button>
+
+            <!--
+    <umb-button type="button"
+                action="model.submit()"
+                button-style="action"
+                label-key="buttons_save">
+    </umb-button>-->
+
+        </umb-editor-footer-content-right>
+    </umb-editor-footer>
+
+
+</umb-editor-panel>

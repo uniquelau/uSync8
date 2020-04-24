@@ -49,6 +49,7 @@ namespace uSync8.BackOffice.Configuration
             settings.AddOnPing = node.Element("AddOnPing").ValueOrDefault(true);
             settings.RebuildCacheOnCompletion = node.Element("RebuildCacheOnCompletion").ValueOrDefault(false);
             settings.FailOnMissingParent = node.Element("FailOnMissingParent").ValueOrDefault(true);
+            settings.CreateOnly = node.Element("CreateOnly").ValueOrDefault(false);
 
             // load the handlers 
             var handlerSets = node.Element("HandlerSets");
@@ -128,6 +129,7 @@ namespace uSync8.BackOffice.Configuration
             node.CreateOrSetElement("ReportDebug", settings.ReportDebug);
             node.CreateOrSetElement("RebuildCacheOnCompletion", settings.RebuildCacheOnCompletion);
             node.CreateOrSetElement("FailOnMissingParent", settings.FailOnMissingParent);
+            node.CreateOrSetElement("CreateOnly", settings.CreateOnly);
 
             if (settings.HandlerSets.Count > 0)
             {
@@ -220,6 +222,7 @@ namespace uSync8.BackOffice.Configuration
             settings.BatchSave = GetLocalValue(node.Attribute("BatchSave"), defaultSettings.BatchSave);
             settings.Actions = node.Attribute("Actions").ValueOrDefault("All").ToDelimitedList().ToArray();
             settings.FailOnMissingParent = GetLocalValue(node.Attribute("FailOnMissingParent"), defaultSettings.FailOnMissingParent);
+            settings.CreateOnly = GetLocalValue(node.Attribute("CreateOnly"), defaultSettings.CreateOnly);
 
             // var settingNode = node.Element("Settings");
             // if (settingNode != null)
@@ -269,6 +272,9 @@ namespace uSync8.BackOffice.Configuration
 
             if (config.FailOnMissingParent.IsOverridden)
                 node.SetAttributeValue("FailOnMissingParent", config.FailOnMissingParent);
+
+            if (config.CreateOnly.IsOverridden)
+                node.SetAttributeValue("CreateOnly", config.CreateOnly);
 
             if (config.Actions.Length > 0 && !(config.Actions.Length == 1 && config.Actions[0].InvariantEquals("all")))
                 node.SetAttributeValue("Actions", string.Join(",", config.Actions));

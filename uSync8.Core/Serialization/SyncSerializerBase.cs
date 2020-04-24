@@ -76,7 +76,7 @@ namespace uSync8.Core.Serialization
 
         public SyncAttempt<TObject> Deserialize(XElement node, SyncSerializerOptions options)
         {
-            if (IsEmpty(node))
+            if (!options.CreateOnly && IsEmpty(node))
             {
                 // new behavior when a node is 'empty' that is a marker for a delete or rename
                 // so we process that action here, no more action file/folders
@@ -86,6 +86,12 @@ namespace uSync8.Core.Serialization
             if (!IsValid(node))
                 throw new FormatException($"XML Not valid for type {ItemType}");
 
+            if (options.CreateOnly)
+            {
+                var item = this.FindItem(node);
+                if (item != null)
+                    return SyncAttempt<TObject>.Succeed(ItemAlias(item), default, ChangeType.AlreadyExists, "Already exists : Existing Item will not be overwritten");
+            }
 
             if (options.Flags.HasFlag(SerializerFlags.Force) || IsCurrent(node) > ChangeType.NoChange)
             {
@@ -288,6 +294,8 @@ namespace uSync8.Core.Serialization
                     return ChangeType.Create;
                 }
             }
+
+            if (options.CreateOnly) return ChangeType.AlreadyExists;
 
             if (IsEmpty(node)) return CalculateEmptyChange(node, item);
 

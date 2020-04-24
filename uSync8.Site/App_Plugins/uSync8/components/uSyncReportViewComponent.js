@@ -30,6 +30,8 @@
             vm.hideAction = vm.hideAction ? true : false;
         };
 
+        vm.EmptyChanges = ['NoChange','Removed','AlreadyExists'];
+
 
         vm.apply = apply;
         vm.status = status;
@@ -37,7 +39,7 @@
         /////////
 
         function showChange(change) {
-            return vm.showAll || (change !== 'NoChange' && change !== 'Removed');
+            return vm.showAll || !isEmptyChange(change);
         }
 
         function getIcon(change) {
@@ -65,12 +67,16 @@
         function countChanges(changes) {
             var count = 0;
             angular.forEach(changes, function (val, key) {
-                if (val.Change !== 'NoChange') {
+                if (!isEmptyChange(val.Change)) {
                     count++;
                 }
             });
 
             return count;
+        }
+
+        function isEmptyChange(change) {
+            return vm.EmptyChanges.indexOf(change) !== -1;
         }
 
         function openDetail(item) {

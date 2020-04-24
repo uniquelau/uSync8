@@ -25,7 +25,7 @@ using uSync8.Core.Serialization;
 namespace uSync8.ContentEdition.Serializers
 {
     [SyncSerializer("B4060604-CF5A-46D6-8F00-257579A658E6", "MediaSerializer", uSyncConstants.Serialization.Media)]
-    public class MediaSerializer : ContentSerializerBase<IMedia>, ISyncSerializer<IMedia>
+    public class MediaSerializer : ContentSerializerBase<IMedia>, ISyncOptionsSerializer<IMedia>
     {
         private readonly IMediaService mediaService;
 
@@ -107,7 +107,7 @@ namespace uSync8.ContentEdition.Serializers
         }
 
 
-        protected override SyncAttempt<XElement> SerializeCore(IMedia item)
+        protected override SyncAttempt<XElement> SerializeCore(IMedia item, SyncSerializerOptions options)
         {
             var node = InitializeNode(item, item.ContentType.Alias);
 
@@ -117,7 +117,10 @@ namespace uSync8.ContentEdition.Serializers
             node.Add(info);
             node.Add(properties);
 
-            info.Add(SerializeFileHash(item));
+            var includeHash = options.Settings.ValueOrDefault("IncludeHash", true);
+
+            if (includeHash) 
+                info.Add(SerializeFileHash(item));
 
             return SyncAttempt<XElement>.Succeed(
                 item.Name,

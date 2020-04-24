@@ -1112,11 +1112,14 @@ namespace uSync8.BackOffice.SyncHandlers
         /// </remarks>
         protected virtual SyncSerializerOptions GetSerializerOptions(HandlerSettings config, SerializerFlags flags)
         {
-            var options = new SyncSerializerOptions() { Flags = flags };
-            if (config.Settings != null)
-            {
-                options.Settings = config.Settings;
-            }
+            var options = new SyncSerializerOptions() { 
+                CreateOnly = config.CreateOnly,
+                Flags = flags 
+            };
+            
+            if (config.Settings != null) options.Settings = config.Settings;
+            
+
             return options;
         }
 
