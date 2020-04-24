@@ -54,11 +54,10 @@ namespace uSync8.Core.Serialization
 
         public bool IsTwoPass { get; private set; }
 
-
+        [Obsolete("Serialize with options")]
         public SyncAttempt<XElement> Serialize(TObject item)
-        {
-            return SerializeCore(item);
-        }
+            => Serialize(item, new SyncSerializerOptions());
+
 
         /// <summary>
         ///  CanDeserialize based on the flags, used to check the model is good, for this import 
@@ -70,46 +69,52 @@ namespace uSync8.Core.Serialization
             => SyncAttempt<TObject>.Succeed("No Check", ChangeType.NoChange);
 
         public SyncAttempt<TObject> Deserialize(XElement node, SerializerFlags flags)
+            => Deserialize(node, new SyncSerializerOptions()
+            {
+                Flags = flags
+            });
+
+        public SyncAttempt<TObject> Deserialize(XElement node, SyncSerializerOptions options)
         {
             if (IsEmpty(node))
             {
                 // new behavior when a node is 'empty' that is a marker for a delete or rename
                 // so we process that action here, no more action file/folders
-                return ProcessAction(node, flags);
+                return ProcessAction(node, options.Flags);
             }
 
             if (!IsValid(node))
                 throw new FormatException($"XML Not valid for type {ItemType}");
 
 
-            if ( flags.HasFlag(SerializerFlags.Force) || IsCurrent(node) > ChangeType.NoChange)
+            if (options.Flags.HasFlag(SerializerFlags.Force) || IsCurrent(node) > ChangeType.NoChange)
             {
                 // pre-deserilzation check. 
-                var check = CanDeserialize(node, flags);
+                var check = CanDeserialize(node, options.Flags);
                 if (!check.Success) return check;
 
                 logger.Debug(serializerType, "Base: Deserializing {0}", ItemType);
-                var result = DeserializeCore(node);
+                var result = DeserializeCore(node, options);
 
                 if (result.Success)
                 {
                     logger.Debug(serializerType, "Base: Deserialize Core Success {0}", ItemType);
 
-                    if (!flags.HasFlag(SerializerFlags.DoNotSave))
+                    if (!options.Flags.HasFlag(SerializerFlags.DoNotSave))
                     {
-                        logger.Debug(serializerType, "Base: Serializer Saving (No DoNotSaveFlag) {0}", result.Item.Id); 
+                        logger.Debug(serializerType, "Base: Serializer Saving (No DoNotSaveFlag) {0}", result.Item.Id);
                         // save 
                         SaveItem(result.Item);
                     }
 
-                    if (flags.HasFlag(SerializerFlags.OnePass))
+                    if (options.Flags.HasFlag(SerializerFlags.OnePass))
                     {
                         logger.Debug(serializerType, "Base: Processing item in one pass {0}", result.Item.Id);
 
-                        var secondAttempt = DeserializeSecondPass(result.Item, node, flags);
+                        var secondAttempt = DeserializeSecondPass(result.Item, node, options);
 
                         logger.Debug(serializerType, "Base: Second Pass Result {0} {1}", result.Item.Id, secondAttempt.Success);
-                        
+
                         // if its the second pass, we return the results of that pass
                         return secondAttempt;
                     }
@@ -121,13 +126,31 @@ namespace uSync8.Core.Serialization
             return SyncAttempt<TObject>.Succeed(node.GetAlias(), default(TObject), ChangeType.NoChange);
         }
 
+        [Obsolete("Call with options")]
         public virtual SyncAttempt<TObject> DeserializeSecondPass(TObject item, XElement node, SerializerFlags flags)
-        {
-            return SyncAttempt<TObject>.Succeed(nameof(item), item, typeof(TObject), ChangeType.NoChange);
-        }
+            => DeserializeSecondPass(item, node, new SyncSerializerOptions() { Flags = flags });
 
-        protected abstract SyncAttempt<XElement> SerializeCore(TObject item);
-        protected abstract SyncAttempt<TObject> DeserializeCore(XElement node);
+        [Obsolete("Call with options")]
+        protected virtual SyncAttempt<XElement> SerializeCore(TObject item)
+            => SyncAttempt<XElement>.Succeed(nameof(item), ChangeType.NoChange);
+
+        [Obsolete("Call with options")]
+        protected virtual SyncAttempt<TObject> DeserializeCore(XElement node)
+            => SyncAttempt<TObject>.Succeed(node.GetAlias(), ChangeType.NoChange);
+
+
+        // ISyncOptionsSerializer : Implimentation
+        // 
+
+        public SyncAttempt<XElement> Serialize(TObject item, SyncSerializerOptions options)
+            => SerializeCore(item, options);
+
+        protected virtual SyncAttempt<XElement> SerializeCore(TObject item, SyncSerializerOptions options)
+            => SerializeCore(item);
+        protected virtual SyncAttempt<TObject> DeserializeCore(XElement node, SyncSerializerOptions options)
+            => DeserializeCore(node);
+        public virtual SyncAttempt<TObject> DeserializeSecondPass(TObject item, XElement node, SyncSerializerOptions options)
+            => SyncAttempt<TObject>.Succeed(nameof(item), item, typeof(TObject), ChangeType.NoChange);
 
         /// <summary>
         ///  all xml items now have the same top line, this makes 
@@ -184,11 +207,11 @@ namespace uSync8.Core.Serialization
 
             var actionType = node.Attribute("Change").ValueOrDefault<SyncActionType>(SyncActionType.None);
 
-            logger.Debug(serializerType, "Empty Node : Processing Action {0}", actionType); 
+            logger.Debug(serializerType, "Empty Node : Processing Action {0}", actionType);
 
             var (key, alias) = FindKeyAndAlias(node);
-            
-            switch(actionType)
+
+            switch (actionType)
             {
                 case SyncActionType.Delete:
                     return ProcessDelete(key, alias, flags);
@@ -224,7 +247,7 @@ namespace uSync8.Core.Serialization
 
             if (item != null)
             {
-                logger.Debug(serializerType, "Deleting Item : {0}", item.Id); 
+                logger.Debug(serializerType, "Deleting Item : {0}", item.Id);
                 DeleteItem(item);
                 return SyncAttempt<TObject>.Succeed(alias, ChangeType.Delete);
             }
@@ -239,7 +262,11 @@ namespace uSync8.Core.Serialization
             return SyncAttempt<TObject>.Succeed(alias, ChangeType.NoChange);
         }
 
+
         public virtual ChangeType IsCurrent(XElement node)
+            => IsCurrent(node, new SyncSerializerOptions());
+
+        public virtual ChangeType IsCurrent(XElement node, SyncSerializerOptions options)
         {
             if (node == null) return ChangeType.Update;
 
@@ -266,7 +293,7 @@ namespace uSync8.Core.Serialization
 
             var newHash = MakeHash(node);
 
-            var currentNode = Serialize(item);
+            var currentNode = Serialize(item, options);
             if (!currentNode.Success) return ChangeType.Create;
 
             var currentHash = MakeHash(currentNode.Item);
@@ -283,7 +310,7 @@ namespace uSync8.Core.Serialization
             // simple logic, if it's a delete we say so, 
             // renames are picked up by the check on the new file
 
-            switch(node.GetEmptyAction())
+            switch (node.GetEmptyAction())
             {
                 case SyncActionType.Delete:
                     return ChangeType.Delete;
@@ -362,7 +389,7 @@ namespace uSync8.Core.Serialization
         /// </summary>
         public virtual void Save(IEnumerable<TObject> items)
         {
-            foreach(var item in items)
+            foreach (var item in items)
             {
                 this.SaveItem(item);
             }

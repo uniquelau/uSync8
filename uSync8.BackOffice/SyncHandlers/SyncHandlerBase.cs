@@ -417,8 +417,7 @@ namespace uSync8.BackOffice.SyncHandlers
                     var node = XElement.Load(stream);
                     if (ShouldImport(node, config))
                     {
-                        var attempt = serializer.Deserialize(node, flags);
-                        return attempt;
+                        return DoDeserialize(node, config, flags);
                     }
                     else
                     {
@@ -549,7 +548,7 @@ namespace uSync8.BackOffice.SyncHandlers
 
             var filename = GetPath(folder, item, config.GuidNames, config.UseFlatStructure);
 
-            var attempt = serializer.Serialize(item);
+            var attempt = DoSerialize(item, config);
             if (attempt.Success)
             {
                 if (ShouldExport(attempt.Item, config))
@@ -751,7 +750,7 @@ namespace uSync8.BackOffice.SyncHandlers
             {
                 var actions = new List<uSyncAction>();
 
-                var change = serializer.IsCurrent(node);
+                var change = DoIsCurrent(node, config);
                 var action = uSyncActionHelper<TObject>
                         .ReportAction(change, node.GetAlias(), !string.IsNullOrWhiteSpace(filename) ? filename : node.GetAlias(), node.GetKey(), this.Alias);
 
@@ -1019,7 +1018,7 @@ namespace uSync8.BackOffice.SyncHandlers
         {
             var element = FindByUdi(udi);
             if (!element.Equals(default))
-                return this.serializer.Serialize(element);
+                return DoSerialize(element, null);
 
             return SyncAttempt<XElement>.Fail(udi.ToString(), ChangeType.Fail, "Item not found");
         }
@@ -1092,5 +1091,70 @@ namespace uSync8.BackOffice.SyncHandlers
 
         #endregion
 
+        
+        /// <summary>
+        ///  Get the options to pass to the serializer for the Serialize/Deserialize functions
+        /// </summary>
+        /// <remarks>
+        ///  the options are sent to ISyncOptionsSerializers, the base method, will transfere
+        ///  any flags and config settings to the SyncSerializerOptions class
+        ///  
+        ///  this allows us to then pass through handler config settings to the serializers.
+        ///  
+        ///  most serializers don't need to have options passed through but doing it like this
+        ///  means we can where we need to have special options so serializers can choose to
+        ///  serialize/omit things if we really want them to (relations being the prime candidate)
+        ///  
+        ///  passing the flags does mean we can have the create only behavior at the serializer level,
+        ///  which might be usefull if we for example only want to create a property and not remove 
+        ///  missing ones?
+        /// 
+        /// </remarks>
+        protected virtual SyncSerializerOptions GetSerializerOptions(HandlerSettings config, SerializerFlags flags)
+        {
+            var options = new SyncSerializerOptions() { Flags = flags };
+            if (config.Settings != null)
+            {
+                options.Settings = config.Settings;
+            }
+            return options;
+        }
+
+        protected virtual SyncSerializerOptions GetSerializerOptions(HandlerSettings config)
+            => GetSerializerOptions(config, SerializerFlags.None);
+
+
+        private SyncAttempt<TObject> DoDeserialize(XElement node, HandlerSettings config, SerializerFlags flags)
+        {
+            if (serializer is ISyncOptionsSerializer<TObject> optionSerializer)
+            {
+                return optionSerializer.Deserialize(node, GetSerializerOptions(config, flags));
+            }
+
+            // else 
+            return serializer.Deserialize(node, flags);
+        }
+
+        private SyncAttempt<XElement> DoSerialize(TObject item, HandlerSettings config)
+        { 
+            if (serializer is ISyncOptionsSerializer<TObject> optionSerializer)
+            {
+                return optionSerializer.Serialize(item, GetSerializerOptions(config));
+            }
+
+            // else
+            return serializer.Serialize(item);
+        }
+
+        private ChangeType DoIsCurrent(XElement node, HandlerSettings config)
+        {
+            if (serializer is ISyncOptionsSerializer<TObject> optionSerializer)
+            {
+                return optionSerializer.IsCurrent(node, GetSerializerOptions(config));
+            }
+
+            // else
+            return serializer.IsCurrent(node);
+        }
     }
 }
