@@ -30,7 +30,7 @@
         }
 
         public TObject Value { get; set; }
-        public bool IsOverridden { get; internal set; }
+        public bool IsOverridden { get; set; }
 
         public static implicit operator TObject(OverriddenValue<TObject> value)
         {

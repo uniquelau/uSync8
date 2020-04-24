@@ -1,89 +1,126 @@
-﻿<umb-editor-panel>
-    <umb-editor-header name="model.config.Alias"
-                       description="'Settings for the handler'"
-                       description-locked="true"
-                       name-locked="true"
-                       hide-alias="true"
-                       hide-icon="true">
-    </umb-editor-header>
+﻿<div ng-controller="uSyncHandlerConfigController as dvm">
+    <umb-editor-panel>
+        <umb-editor-header name="model.config.Alias"
+                           description="'Settings for the handler'"
+                           description-locked="true"
+                           name-locked="true"
+                           hide-alias="true"
+                           hide-icon="true">
+        </umb-editor-header>
 
-    <umb-editor-container class="form-horizontal">
+        <umb-editor-container class="form-horizontal">
 
-        <umb-box>
-            <umb-box-header title="Handler Options"></umb-box-header>
-            <umb-box-content>
-                
-                <umb-control-group label="Enabled"
-                                   description="Is this handler on?">
-                    <umb-toggle checked="model.config.Enabled"
-                                on-click="model.config.Enabled = !model.config.Enabled"
-                                show-labels="true"
-                                label-on="Enabled"
-                                label-off="Disabled"
-                                label-position="right">
-                    </umb-toggle>
-                </umb-control-group>
+            <umb-box>
+                <umb-box-header title="Enable Handler"
+                                description="Control when and how the handler runs"></umb-box-header>
+                <umb-box-content>
 
-                <umb-control-group label="Enabled For"
-                                   description="What actions does this handler run on?">
+                    <umb-control-group label="Enabled"
+                                       description="Is this handler on?">
+                        <umb-toggle checked="model.config.Enabled"
+                                    on-click="model.config.Enabled = !model.config.Enabled"
+                                    show-labels="true"
+                                    label-on="Enabled"
+                                    label-off="Disabled"
+                                    label-position="right">
+                        </umb-toggle>
+                    </umb-control-group>
 
-                    <select ng-model="model.config.Actions">
-                        <option>All</option>
-                        <option>Export</option>
-                        <option>Import</option>
-                        <option>ExportOnSave</option>
-                    </select>
-                    
-                </umb-control-group>
-            </umb-box-content>
-        </umb-box>
+                    <umb-control-group label="Enabled For"
+                                       description="What actions does this handler run on?">
+                        <div ng-repeat="action in dvm.actions">
 
-        <umb-box>
-            <umb-box-header title="Handler Settings"></umb-box-header>
-            <umb-box-content>
-                <umb-control-group label="Flat structure"
-                                   description="All items stored in a flat folder strucure">
-                    <umb-toggle checked="model.config.UseFlatStructure.Value"
-                                on-click="model.config.UseFlatStructure.Value = !model.config.UseFlatStructure.Value"
-                                show-labels="true"
-                                label-on="Flat"
-                                label-off="Folders"
-                                label-position="right">
-                    </umb-toggle>
-                </umb-control-group>
+                            <label class="checkbox umb-form-check umb-form-check--checkbox">
+                                <input type="checkbox"
+                                       name="exportActions[]"
+                                       class="umb-form-check__input"
+                                       value="{{action.value}}"
+                                       ng-model="action.selected"/>
+                                <span class="umb-form-check__state" aria-hidden="true">
+                                    <span class="umb-form-check__check">
+                                        <i class="umb-form-check__icon icon-check"></i>
+                                    </span>
+                                </span>
 
-                <umb-control-group label="Use Guids for filenames"
-                                   description="Use the guid of an item as the filename">
-                    <umb-toggle checked="model.config.GuidNames.Value"
-                                on-click="model.config.GuidNames.Value = !model.config.GuidNames.Value"
-                                show-labels="true"
-                                label-on="Flat"
-                                label-off="Folders"
-                                label-position="right">
-                    </umb-toggle>
-                </umb-control-group>
-            </umb-box-content>
-        </umb-box>
+                                <span class="umb-form-check__text">{{action.name}}</span>
 
-    </umb-editor-container>
+                            </label>
 
-    <umb-editor-footer>
-        <umb-editor-footer-content-right>
-            <umb-button type="button"
-                        button-style="link"
-                        label-key="general_close"
-                        action="model.close()">
-            </umb-button>
-
-            <!--
-    <umb-button type="button"
-                action="model.submit()"
-                button-style="action"
-                label-key="buttons_save">
-    </umb-button>-->
-
-        </umb-editor-footer-content-right>
-    </umb-editor-footer>
+                        </div>
 
 
-</umb-editor-panel>
+                    </umb-control-group>
+                </umb-box-content>
+            </umb-box>
+
+            <umb-box>
+                <umb-box-header title="Handler Settings"
+                                description="Control how the handler works"></umb-box-header>
+                <umb-box-content>
+                    <umb-control-group label="Flat structure"
+                                       description="All items stored in a flat folder strucure">
+                        <umb-toggle checked="model.config.UseFlatStructure.Value"
+                                    on-click="dvm.toggleOverride(model.config.UseFlatStructure, model.default.UseFlatStructure)"
+                                    show-labels="true"
+                                    label-on="Flat"
+                                    label-off="Folders"
+                                    label-position="right">
+                        </umb-toggle>
+                    </umb-control-group>
+
+                    <umb-control-group label="Use Guids for filenames"
+                                       description="Use the guid of an item as the filename">
+                        <umb-toggle checked="model.config.GuidNames.Value"
+                                    on-click="dvm.toggleOverride(model.config.GuidNames, model.default.UseGuidNames)"
+                                    show-labels="true"
+                                    label-on="Guid filenames"
+                                    label-off="alias filenames"
+                                    label-position="right">
+                        </umb-toggle>
+                    </umb-control-group>
+
+                    <umb-control-group label="Fail on Missing Parent"
+                                       description="Import of an item will fail if it's parent is not already in Umbraco or the current Import">
+                        <umb-toggle checked="model.config.FailOnMissingParent.Value"
+                                    on-click="dvm.toggleOverride(model.config.FailOnMissingParent, model.default.FailOnMissingParent)"
+                                    show-labels="true"
+                                    label-on="Fail when missing"
+                                    label-off="Import as near as possible"
+                                    label-position="right">
+                        </umb-toggle>
+                    </umb-control-group>
+
+                    <umb-control-group label="Create Only"
+                                       description="Only import new items that don't already exist on this site">
+                        <umb-toggle checked="model.config.CreateOnly.Value"
+                                    on-click="dvm.toggleOverride(model.config.CreateOnly, model.default.CreateOnly)"
+                                    show-labels="true"
+                                    label-on="New items only"
+                                    label-off="Import all changes"
+                                    label-position="right">
+                        </umb-toggle>
+                    </umb-control-group>
+                </umb-box-content>
+            </umb-box>
+
+        </umb-editor-container>
+
+        <umb-editor-footer>
+            <umb-editor-footer-content-right>
+                <umb-button type="button"
+                            button-style="link"
+                            label-key="general_close"
+                            action="model.close()">
+                </umb-button>
+
+                <!--
+                <umb-button type="button"
+                            action="model.submit()"
+                            button-style="action"
+                            label-key="buttons_save">
+                </umb-button>-->
+
+            </umb-editor-footer-content-right>
+        </umb-editor-footer>
+    </umb-editor-panel>
+</div>

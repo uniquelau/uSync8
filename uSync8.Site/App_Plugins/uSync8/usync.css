@@ -386,3 +386,20 @@
 .usync-change-row-Fail {
     background-color: #FFEBEE;
 }
+
+.usync-handler-list {
+    margin-bottom: 5px;
+    border-bottom: 1px solid #eee;
+}
+
+.usync-handler-list .umb-permission {
+    align-items: flex-start;
+}
+
+.usync-handler-list .umb-permission button {
+    padding-top: 5px;
+}
+
+.usync-handler-list .umb-permission .permission-name {
+    font-weight: 700;
+}

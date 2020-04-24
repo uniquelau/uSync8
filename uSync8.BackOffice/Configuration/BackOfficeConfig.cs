@@ -172,6 +172,8 @@ namespace uSync8.BackOffice.Configuration
 
         private void SetHandlerValues(XElement node, HandlerSettings handler, uSyncSettings defaultSettings)
         {
+            node.RemoveAttributes();
+
             node.SetAttributeValue("Alias", handler.Alias);
             node.SetAttributeValue("Enabled", handler.Enabled);
 
@@ -187,20 +189,23 @@ namespace uSync8.BackOffice.Configuration
             if (handler.FailOnMissingParent.IsOverridden)
                 node.SetAttributeValue("FailOnMissingParent", handler.FailOnMissingParent.Value);
 
+            if (handler.CreateOnly.IsOverridden)
+                node.SetAttributeValue("CreateOnly", handler.CreateOnly.Value);
+
             node.SetAttributeValue("Actions", string.Join(",", handler.Actions));
 
             if (handler.Settings != null && handler.Settings.Count > 0)
             {
-                var settingsNode = node.FindOrCreate("Settings");
-
                 foreach (var setting in handler.Settings)
                 {
-                    var s = settingsNode.FindOrCreate("Add", "Key", setting.Key);
+                    var s = node.FindOrCreate("Add", "Key", setting.Key);
                     s.SetAttributeValue("Value", setting.Value);
                 }
-
-                settingsNode.RemoveMissingElements("Add", "Key", handler.Settings.Keys.ToList());
             }
+
+            var existing = node.Element("Settings");
+            if (existing != null) existing.Remove();
+
         }
 
         #region Default Handler Loading Stuff
@@ -254,6 +259,7 @@ namespace uSync8.BackOffice.Configuration
             return new OverriddenValue<TObject>(attribute.ValueOrDefault(defaultValue), true);
         }
 
+        /*
         public void SaveHandlerConfig(XElement node, HandlerSettings config, uSyncSettings globalSettings)
         {
             if (node == null) return;
@@ -281,21 +287,18 @@ namespace uSync8.BackOffice.Configuration
 
             if (config.Settings != null && config.Settings.Any())
             {
-                var settingNode = new XElement("Settings");
-
                 foreach (var setting in config.Settings)
                 {
-                    settingNode.Add(new XElement("Add",
+                    node.Add(new XElement("Add",
                         new XAttribute("Key", setting.Key),
                         new XAttribute("Value", setting.Value)));
                 }
 
                 var existing = node.Element("Settings");
                 if (existing != null) existing.Remove();
-
-                node.Add(settingNode);
             }
         }
+        */
 
         #endregion
 

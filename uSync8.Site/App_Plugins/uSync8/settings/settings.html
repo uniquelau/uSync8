@@ -59,9 +59,9 @@
                     <div class="umb-permission">
                         <umb-toggle class="umb-permission__toggle"
                                     checked="vm.settings.FailOnMissingParent"
-                                    on-click="vm.settings.FailOnMissingParent = !vm.settings.FailOnMissingParent">
+                                    on-click="vm.toggleSetting('FailOnMissingParent')">
                         </umb-toggle>
-                        <div class="umb-permission__content" ng-click="vm.settings.FailOnMissingParent = !vm.settings.FailOnMissingParent">
+                        <div class="umb-permission__content" ng-click="vm.toggleSetting('FailOnMissingParent')">
                             <div>Fail on Missing Parent</div>
                             <div class="umb-permission__description">Import of an item will fail if it's parent is not already in Umbraco or the current Import</div>
                         </div>
@@ -70,9 +70,9 @@
                     <div class="umb-permission">
                         <umb-toggle class="umb-permission__toggle"
                                     checked="vm.settings.CreateOnly"
-                                    on-click="vm.settings.CreateOnly = !vm.settings.CreateOnly">
+                                    on-click="vm.toggleSetting('CreateOnly')">
                         </umb-toggle>
-                        <div class="umb-permission__content" ng-click="vm.settings.CreateOnly = !vm.settings.CreateOnly">
+                        <div class="umb-permission__content" ng-click="vm.toggleSetting('CreateOnly')">
                             <div>Create Only</div>
                             <div class="umb-permission__description">Only import new items that don't already exist on this site</div>
                         </div>
@@ -93,9 +93,9 @@
                     <div class="umb-permission">
                         <umb-toggle class="umb-permission__toggle"
                                     checked="vm.settings.UseFlatStructure"
-                                    on-click="vm.settings.UseFlatStructure = !vm.settings.UseFlatStructure">
+                                    on-click="vm.toggleSetting('UseFlatStructure')">
                         </umb-toggle>
-                        <div class="umb-permission__content" ng-click="vm.settings.UseFlatStructure= !vm.settings.UseFlatStructure">
+                        <div class="umb-permission__content" ng-click="vm.toggleSetting('UseFlatStructure')">
                             <div>Flat structure</div>
                             <div class="umb-permission__description">All items of a type are stored in a flat folder strucure</div>
                         </div>
@@ -103,9 +103,9 @@
                     <div class="umb-permission">
                         <umb-toggle class="umb-permission__toggle"
                                     checked="vm.settings.UseGuidNames"
-                                    on-click="vm.settings.UseGuidNames = !vm.settings.UseGuidNames">
+                                    on-click="vm.toggleSetting('UseGuidNames', 'GuidNames')">
                         </umb-toggle>
-                        <div class="umb-permission__content" ng-click="vm.settings.UseGuidNames= !vm.settings.UseGuidNames">
+                        <div class="umb-permission__content" ng-click="vm.toggleSetting('UseGuidNames', 'GuidNames')">
                             <div>Use Guids for filenames</div>
                             <div class="umb-permission__description">Use the guid of an item as the filename</div>
                         </div>
@@ -131,7 +131,7 @@
                 <umb-box-header title="Handler Set: {{handlerSet.Name}}" ng-click="handlerSet.show = !handlerSet.show"></umb-box-header>
                 <umb-box-content ng-if="handlerSet.show">
                     <div ng-repeat="handler in handlerSet.Handlers"
-                         class="flex justify-between">
+                         class="flex justify-between usync-handler-list">
                         <div class="umb-permission">
                             <umb-toggle class="umb-permission__toggle"
                                         checked="handler.Enabled"
@@ -139,13 +139,17 @@
                             </umb-toggle>
 
                             <div class="umb-permission__content">
-                                <div>
+                                <div class="permission-name">
                                     {{handler.Alias}}
                                 </div>
                                 <div class="umb-permission__description">
                                     Enabled for :
-                                    <span ng-if="handler.DefaultConfig.Actions.length > 0">{{handler.DefaultConfig.Actions}}</span>
-                                    <span ng-if="!handler.DefaultConfig.Actions">All</span>
+                                    <span ng-repeat="action in handler.Actions">{{action}}</span>
+
+                                    <div ng-if="handler.CreateOnly.IsOverridden">Create Only : {{handler.CreateOnly.Value}}</div>
+                                    <div ng-if="handler.FailOnMissingParent.IsOverridden">Fail on missing parent: {{handler.FailOnMissingParent.Value}}</div>
+                                    <div ng-if="handler.GuidNames.IsOverridden">Use Guid Names : {{handler.GuidNames.Value}}</div>
+                                    <div ng-if="handler.UseFlatStructure.IsOverridden">Flat Structure: {{handler.UseFlatStructure.Value}}</div>
                                 </div>
                             </div>
                         </div>

@@ -13,6 +13,7 @@
         vm.umbracoVersion = Umbraco.Sys.ServerVariables.application.version;
 
         vm.saveSettings = saveSettings;
+        vm.toggleSetting = toggleSetting;
 
         vm.openHandlerConfig = openHandlerConfig;
 
@@ -31,7 +32,37 @@
                 .then(function (result) {
                     vm.settings = result.data;
                     vm.loading = false;
+
+
+                    vm.settings.HandlerSets.forEach(function (set) {
+                        console.log(set, vm.settings.DefaultSet);
+                        if (set.Name == vm.settings.DefaultSet) {
+                            set.show = true;
+                            console.log('show');
+                        }
+                    })
                 });
+        }
+
+        // toggles a value, and updates the value in all the handlers (where its not overridden)
+        function toggleSetting(propertyName, handlerProperty) {
+
+            if (vm.settings[propertyName] !== undefined) {
+                vm.settings[propertyName] = !vm.settings[propertyName];
+
+                if (handlerProperty === undefined) {
+                    handlerProperty = propertyName;
+                }
+
+                vm.settings.HandlerSets.forEach(function (set) {
+                    set.Handlers.forEach(function (handler) {
+                        // find the value by name in the handler object?
+                        if (handler[handlerProperty] !== undefined && handler[handlerProperty].IsOverridden == false) {
+                            handler[handlerProperty].Value = vm.settings[propertyName];
+                        }
+                    });
+                });
+            }
         }
         
 
@@ -51,6 +82,7 @@
 
             editorService.open({
                 config: config,
+                default: vm.settings,
                 title: 'handler config',
                 size: 'small',
                 view: Umbraco.Sys.ServerVariables.umbracoSettings.appPluginsPath + '/uSync8/settings/handlerConfig.html',
@@ -58,8 +90,8 @@
                     editorService.close();
                 },
                 close: function () {
-                    console.log(config);
                     editorService.close();
+                    console.log(config);
                 }
             });
 
