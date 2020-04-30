@@ -16,6 +16,8 @@ namespace uSync8.BackOffice
         public string Message { get; set; }
         public List<SyncHandlerSummary> Handlers { get; set; }
 
+        public int CurrentStep { get; internal set; }
+
         public SyncProgressSummary(
             IEnumerable<ISyncHandler> handlers,
             string message,
@@ -74,6 +76,15 @@ namespace uSync8.BackOffice
                 item.Changes = changeCount;
                 item.InError = hasErrors;
             }
+
+
+            // 8.7 + return the current step (helps us with smoother progress bars).
+            if (status == HandlerStatus.Processing)
+            {
+                var pos = this.Handlers.FindIndex(x => x.Name == name);
+                this.CurrentStep = pos + 1;
+            }
+
         }
 
         /// <summary>
